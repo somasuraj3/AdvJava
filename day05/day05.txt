@@ -1,0 +1,218 @@
++ Hibernate --> ORM tool
+	- Hibernate Architecture:
+	- CRUD operations:
+	- Hibernate Transactions:
+	- Criteria queries:
+		- WHERE clause
+		- ORDER BY clause
+		- Group functions -- Projection
+	- DetachedCriteria queries:
+		- Can be created without having session object available.
+		- e.g. 
+			DetachedCriteria dcr = DetachedCriteria.forClass(Book.class);
+			dcr.add(Restrictions.eq("subject", subj));
+			
+			// session can be opened here
+			Criteria cr = dcr.getExecutableCriteria(session);
+			list = cr.list();
+			// session can be closed here
+
++ Hibernate Configuration:
+	- connection.autocommit --> true/false
+		- Few functions like save() can be executed without transaction, if autocommit is true.
+		- Not recommended - to make autocommit=true. Instead use transactions.
+
++ ORM: 
+	- Done using JPA annotations (javax.persistence package).
+		- @Entity, @Table, @Column, @Id, ...
+	- Annotation support was added in hb 3.0 and onwards.
+	- Before that hibernate mapping was done using xml files --> ClassName.hbm.xml.
+
++ Employee.hbm.xml file --> "src" --> CLASSPATH
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="pkg.Employee" table="EMPLOYEE">
+		<meta attribute="class-description">
+			This class contains the employee detail.
+		</meta>
+		<id name="id" type="int" column="id">
+			<generator class="native"/> <!-- AUTO -->
+		</id>
+		<property name="firstName" column="first_name" type="string"/>
+		<property name="lastName" column="last_name" type="string"/>
+		<property name="salary" column="salary" type="int"/>
+	</class>
+</hibernate-mapping>
+	
++ In hibernate.cfg.xml file:
+	<mapping resource="Employee.hbm.xml"/>
+
++ Generator class:
+	- auto
+	- identity
+	- sequence
+	- table
+
++ Composite primary key:
+	- PK made of multiple columns.
+	- Product table:
+		| Type | Id | -----
+		|  1   | 1  |
+		|  1   | 2  |
+		|  1   | 3  |
+		|  2   | 1  |
+		|  2   | 2  |
+	- In hibernate: create a seperate class for Ids:
+		public class ProdId implements Serializable {
+			@Column(name="TYPE")
+			private int type;
+			@Column(name="ID")
+			private int id;
+		}
+
+	- In entity class:
+		@Entity
+		@Table(name="PRODUCTS")
+		public class Product implements Serializable {
+			@Id
+			private ProdId pid;
+			// ...
+		}
+
++ Hibernate Entity Life-Cycle:
+	1. Transient:
+		- Entity objects created by java code e.g. using new...
+			- Book b = new Book();
+		- Hibernate layer is not aware of these type of objects. 
+	2. Persistent:
+		- Objects present in hibernate session cache.
+			- Transient object --> some hb method --> Persistent
+				Book b = new Book(); // transient
+				session.save(b); // now b become persist.
+			- Objects are created by the hibernate methods.
+				b = session.get(Book.class, id); // b is created by get() of hb
+			   OR
+				list = criteria.list(); // all objs in list are created by hb.
+			   OR
+				list = query.list(); // all objs in list are created by hb.
+			- Detached object --> some hb method --> Persistent
+		- Hibernate keep track any modifications done in persistent objects. For this each object in cache, it is associated with a diry flag. When object become persistent, flag is set to false. Afterwards, when any setter in invoked on such object, hibernate set that flag to true. During transaction commit, hibernate checks dirty flags of all persistent objects and if found true, modify corresponding record in database using UPDATE query.
+
+	3. Detached:
+		- Objects removed from the session cache are known as detached objects.
+			- session.clear();  // removes all objects from session cache.
+			- session.evict(obj); // removes given object from session cache.
+
+	4. Removed:
+		- Objects whose corresponding database row has been deleted.
+	
++ SQL:
+	session.createSQLQuery();
+
++ HQL:
+	session.createQuery();
+
++ NamedQueries:
+	- Query is associated with entity class and is cached by the hibernate.
+	- It can contain HQL queries --> compiled & stored in cache.
+	- Increased performance.
+	- Declare it:
+		1. @NamedQuery --> entity class
+		2. .hbm.xml file --> 
+	- To write multiple named queries on entity class:
+		@NamedQueries({
+			@NamedQuery(name="...", query="..."),
+			@NamedQuery(name="...", query="..."),
+		})
+
+
++ Call stored proc from hibernate:
+1. Implement MySQL Stored Procedure:
+DELIMITER /
+
+CREATE PROCEDURE `SP_BooksByPriceGT`(p_price double)
+BEGIN
+   SELECT ID,NAME,AUTHOR,SUBJECT,PRICE FROM BOOKS where PRICE > p_price;
+END /
+
+DELIMITER ;
+
+2. In entity class: 
+	@NamedNativeQuery(name="BooksSP", 
+			query="{CALL SP_BooksByPriceGT(:p_price)}", 
+			hints={ @QueryHint(name="org.hibernate.callable", value="true") },
+			resultClass=Book.class) 
+		* @NamedNativeQuery --> indicate SQL query.
+		* query --> JDBC SP call statement
+		* hints --> Tell HB to use CallableStatement for execution of qry --- SP
+		* resultClass --> return type should be converted into object of that class.
+
+3. To call:
+	Query q = session.getNamedQuery("qryName");
+	q.setParamater(....);
+	// execute query using proper method : q.executeUpdate() or q.list() or ...
+	return q.list();
+
++ HQL:
+	- SELECT :
+		from EntityName e where e.property=?
+	- DELETE :
+		DELETE FROM EntityName e where e.property=?
+	- INSERT :
+		- Cannot give individual values for insert like JDBC/SQL.
+		- Can insert data from other objects.
+		- INSERT INTO Employee(firstName, lastName, salary)
+			SELECT firstName, lastName, salary FROM old_employee"
+	- UPDATE : 
+		- UPDATE Employee set salary = :salary WHERE id = :employee_id";
+
++ Hibernate Relation:
+	- Hibernate supports RDBMS table relations and provide easy to CRUD operations on multiple tables simultaneously.
+	- @OneToOne --> 
+	- @OneToMany --> 
+	- @ManyToOne --> 
+	- @ManyToMany --> 
+
++ @OneToMany:
+	1 Dept --> * Emps
+	@Entity
+	@Table(name="EMP")	
+	public class Emp {
+		@Id
+		@Column
+		private int empno;
+		@Column
+		private String ename;
+		@Column //FK
+		private int deptno;
+		// ...
+		// ...
+	}
+
+	@Entity
+	@Table(name="DEPT")	
+	public class Dept {
+		@Id
+		@Column
+		private int id;
+		@Column
+		private String name;
+		@Column		
+		private String loc;
+		@OneToMany(fetch=FetchType.EAGER)
+		private List<Emp> empList;
+		// ...
+	}
+
+
+
+
+
+
+
+
+
+

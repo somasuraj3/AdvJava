@@ -1,0 +1,144 @@
++ Custom Validations
++ Spring Tiles Integration
++ Spring EL
++ Spring AOP
+	- Add aspectjrt.jar & aspectjweaver.jar
+
++ HibernateTemplate:
+- Spring Hibernate Integration:
+	- spring xml file:
+		- add data source, session factory, transaction manager, 
+		- session factory
+			- hibernate properties + packages to scan
+	- Dao class:
+		- autowire session factory.
+		- create session & transaction using @Transactional.
+		- use methods of session object.
+
++ HibernateTemplate	-> hides hibernate session and provide wrapper/helper methods to perform hibernate operations.
+	1. declare hibernate template in xml file. 
+		<bean id="hbTemplate" class="org.springframework.orm.hibernate4.HibernateTemplate">
+			<property name="sessionFactory" ref="mysqlSessionFactory"/>
+		</bean>
+
+	2. In dao class, autowire the hibernateTemplate.
+
+	3. Call methods on hbTemplate to perform hb operations.
+		- hbTemplate.save(obj); --> session.save(obj);
+		- hbTemplate.persist(obj); --> session.persist(obj);
+		- hbTemplate.update(obj); --> session.update(obj);
+		- hbTemplate.delete(obj); --> session.delete(obj);
+		- hbTemplate.get(ClassName.class, primKey);
+		- List<ClassName> list = hbTemplate.find(hql_query, ...);
+		- DetachedCriteria cr = DetachedCriteria.fromClass(ClassName.class);
+		List<ClassName> list = hbTemplate.findByCriteria(cr);
+
++ JDBC Template:
+	+ JDBC Programming:
+		- Load JDBC Driver
+		- Create connection
+		- Create Statement (SELECT or non-SELECT)
+			- non-SELECT:
+				- set params to the query
+					- stmt.setInt(1, b.getId());
+					- stmt.setString(2, b.getName());
+				- cnt = stmt.executeUpdate();
+			- SELECT:
+				- set params to the query
+				- rs = stmt.executeQuery();
+				- while(rs.next()) {
+					b.setId(rs.getInt("ID"));
+					b.setName(rs.getString("NAME"));
+					// ...
+				}
+				- rs.close();
+		- Close stmt and connection.
+
+	+ JDBC Template: Simplify/abstract JDBC programming.
+		- It handles activities like create connection, create statement, set parameters, execute statement, close statement, close connection.
+		1. declare data source, jdbc template in xml file.
+	<bean id="mysqlDataSrc" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+		<property name="url" value="jdbc:mysql://localhost:3306/test?useSSL=false"/>
+		<property name="username" value="root"/>
+		<property name="password" value="root"/>
+	</bean>
+	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="mysqlDataSrc"></property>
+	</bean>
+		2. autowire JdbcTemplate in dao class.
+		3. Call methods on jdbcTemplate to perform JDBC operations.
+			
++ Spring Security:
+	- Authentication & Authorization:
+		- Authentication -- Processing credentials of the user and validating it. It provides identity of the user.
+		- Authorization -- Check if authenticated user has permissions to access intended resource. Deals with "Role Management" in the web application.
+	- Database Design:
+		- Table1: USERS 	--> USERNAME, PASSWORD, ENABLED.
+			- nilesh, nilesh, 1
+			- admin, admin, 1
+		- Table2: USER_ROLES--> ROLEID, USERNAME, ROLE.
+			- 1, nilesh, ROLE_USER
+			- 2, admin, ROLE_ADMIN
+			- 3, admin, ROLE_USER
+	- Configuration:
+		1. web.xml
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+		2. In spring xml file -- authentication
+	<security:authentication-manager>
+	   <security:authentication-provider>
+		<security:jdbc-user-service data-source-ref="dataSrc"
+		   users-by-username-query="select username,password, enabled from users where username=?" 
+		   authorities-by-username-query="select username, role from user_roles where username=?"/>
+	   </security:authentication-provider>
+	</security:authentication-manager>
+		3. In spring xml file -- authorization
+	<security:http auto-config="true" use-expressions="true">	
+		<security:intercept-url pattern="/admin/**" access="hasAnyRole('ROLE_ADMIN')" />
+		<security:intercept-url pattern="/book/**" access="hasAnyRole('ROLE_USER')" />
+		<security:form-login login-page="/login" default-target-url="/auth"
+			authentication-failure-url="/login" />
+		<security:logout logout-success-url="/logout" />
+	</security:http>
+	- JSP page for Login:
+		<form ... action="j_spring_security_check">
+			TextFields -- j_username, j_password
+		</form>		
+
++ WebApplicationContext:
+	- Spring App: 
+		- Spring Container --> ApplicationContext
+		- ApplicationContext:
+			- creates beans.
+			- internationalization.
+			- life cycle mgmt.
+		- ClassPathXmlApplicationContext, AnnotationConfigApplicationContext, FileSystemXmlApplicationContext --> Core Java appln.
+		- WebApplicationContext --> Java EE applicatons
+			|- XmlWebApplicationContext
+			|- AnnotationWebApplicationContext
+	- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

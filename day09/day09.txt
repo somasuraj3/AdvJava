@@ -1,0 +1,67 @@
++ Autowiring:
+	- Using XML:
+		+ autowire: default, bytype, byname
+			- bytype: will attach object of dependency type.
+				<bean id="p1" class="pkg.PersonImpl"/>
+				<bean id="a1" class="pkg.AccountImpl" autowire="???"/>
+				Person accHolder;	// <- AccountImpl class: above p1 object will be attached.
+			- byname: will attach object of dependency name.
+				<bean id="accHolder" class="pkg.PersonImpl"/>
+				<bean id="a1" class="pkg.AccountImpl" autowire="???"/>
+				Person accHolder;	// <- AccountImpl class: above p1 object will be attached.
+	- Using annotations:
+		+ 	@Autowired
+			@Qualifier("beanName") // needed if multiple beans of same type available.
+			private Person accHolder;	// find bean by type.
+
++ Spring Web MVC:
+	+ Request Handler Methods:
+		- Different Arguments:
+			- Bean object (@ModelAttribute), Model, Map, HttpSession, HttpServletRequest, etc.
+		- Different Return Values:
+			- String (view name), ModelAndView, etc. 
+
++ Spring Hibernate Integration:
+	+ Hibernate:
+		- hibernate.cfg.xml: JDBC connection, Dialect, POJO classes, ...
+		- HbUtil class --> create SessionFactory.
+		- Transaction class --> Transaction management
+	+ Spring Hibernate:
+		- JDBC connection --> Data Source --> as Spring bean in XML file.
+			- Core Java: DriverManagerDataSource.
+			- Web Server: BasicDataSource --> Apache.
+		- HbUtil --> LocalSessionFactoryBean class as spring bean in XML file.
+			- This creates SessionFactory.
+		- hibernate.cfg.xml file is optional --> Its settings can be added in spring xml.
+			- SessionFactory settings.
+			- POJO/entity classes --> packagesToScan -- detects hb entities.
+		- Spring Transaction Manager:
+			- Transaction Manager -> SessionFactory --> Spring XML file.
+		- Create Dao classes:
+			class MyDao {
+				@Autowired
+				private SessionFactory factory;
+				@Transactional
+				public void method() {
+					Session hbsession = factory.getCurrentSession();
+					// ...
+				}
+			}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

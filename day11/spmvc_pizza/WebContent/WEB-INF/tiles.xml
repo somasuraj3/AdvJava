@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">        
+
+<tiles-definitions>
+
+	<definition name="masterPage" template="/WEB-INF/common/template.jsp">
+		<put-attribute name="title" value="???" />
+		<put-attribute name="header" value="/WEB-INF/common/header.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/common/footer.jsp" />
+		<put-attribute name="content" value="" />
+	</definition>
+
+	<definition name="t_menu" extends="masterPage">
+		<put-attribute name="title" value="Pizza Menu" />
+		<put-attribute name="content" value="/WEB-INF/pages/menu.jsp" />
+	</definition>
+
+	<definition name="t_item" extends="masterPage">
+		<put-attribute name="title" value="Pizza Item" />
+		<put-attribute name="content" value="/WEB-INF/pages/item.jsp" />
+	</definition>
+
+	<definition name="t_cart" extends="masterPage">
+		<put-attribute name="title" value="Pizza Cart" />
+		<put-attribute name="content" value="/WEB-INF/pages/cart.jsp" />
+	</definition>
+	
+</tiles-definitions>
+
+

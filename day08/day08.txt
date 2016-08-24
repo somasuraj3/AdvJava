@@ -1,0 +1,159 @@
++ XmlBeanFactory:
+	- Deprecated in Spring 4.0
+	- 	ClassPathXmlResource res = new ClassPathXmlResource("myspring.xml");
+		XmlBeanFactory factory = new XmlBeanFactory(res);
+		BeanClass obj = (BeanClass)factory.getBean("beanName");
+	- Does not manage bean life cycle --> registerShutdownHook() is not supported.
+	- No support localisation.
+	- Event publishing is not supported.
+
++ ApplicationContext:
+	- Used for bean creation.
+	- Provide support for bean life cycle, localisation, event publishing, ...
+	- ApplicationContext types:
+		- AnnotationConfigApplicationContext
+		- ClassPathXmlApplicationContext
+		- FileSystemXmlApplicationContext
+		- WebApplicationContext
+
++ Spring Configuration:
+	1. XML configuration:
+		- Bean declaration is done in XML file.
+		- ClassPathXmlApplicationContext or FileSystemXmlApplicationContext
+	2. Annotation configuration:
+		- AnnotationConfigApplicationContext
+			@Configuration
+			public class AppConfig {
+				@Bean
+				public IBox getBoxB1() {
+					IBox b1 = new Box(2, 3, 4);
+					return b1;
+				}
+				@Bean(name={"b2"})
+				public IBox getBoxB2() {
+					IBox b2 = new Box();
+					b2.setLength(3);
+					b2.setBreadth(4);
+					b2.setHeight(5);
+					return b2;
+				}
+			}
+		- A seperate java class contains methods to create beans and is annotated with @Configuration.
+		- No need to create XML file.
+		- To use annotation based config:
+			AnnotationConfigApplicationContext ctx = 
+				new AnnotationConfigApplicationContext(AppConfig.class);
+	3. Mixed (Java) configuration:
+		- XML config + annoatations on bean classes.
+		- Can specify annotations on bean classes/methods. These annotations will be processed only if certain tags are present in the XML file.
+		- e.g. 	
+			@PostConstruct --> init method
+			@PreDestroy --> destry method
+		Will be processes only if XML file contains <context:annotation-config/>.
+	
++ Autowiring:
+	- @Autowired annotation can be used on field level or on (setter) method level.
+	- If used on setter method, setter method will be called to inject the dependency.
+	- If used on field level, dependency will be directly injected (bypassing setter).
+
+	- Autowiring attach a spring bean of given "type" to the field in dependent object.
+	- In case no matching bean is found, exception will be raised.
+	- In case multiple matching beans are found, exeception will be raised. However in this case @Qualifier can be used with @Autowired to specify exact bean name to be used while DI.
+
+	- @Autowired & @Qualifier will work only if <context:annotation-config/> given in bean config xml file.
+
+	- Log interface:
+		|- ConsoleLog class
+		|- FileLog class
+
+	- Box interface:
+		|- BoxImpl class
+			-> privavte int length, breadth, height;
+			->  @Autowired
+				@Qualifier("clog")
+				private Log logger;
+
+	- beans XML:
+		<bean id="clog" class="pkg.ConsoleLog"/>
+		<bean id="flog" class="pkg.FileLog"/>
+		<bean id="b1" class="pkg.BoxImpl"/>
+
+	- Autowiring using XML file:
+		- By default autowiring is disabled.
+			<bean id="objName" class="pkg.ClassName" autowire="default"/>
+			<bean id="objName" class="pkg.ClassName" autowire="no"/>
+		- Autowiring can be done in following ways:
+			<bean id="objName" class="pkg.ClassName" autowire="byType"/>
+				--> dependent object field type is matched with the dependency bean type. 
+			<bean id="objName" class="pkg.ClassName" autowire="byName"/>
+				--> dependent object fieldName is matched with the dependency bean name.
+			<bean id="objName" class="pkg.ClassName" autowire="constructor"/>
+				--> dependency object is injected via constructor.
+			
+	- @Autowired does auto wiring by type (default). 
+		- If multiple beans of same type are available, then it try to get bean of same name.
+			field name is matched with available bean names.
+		- If no matching type or name is found, then @Qualifier must be used to do auto wiring by given name.
+
++ Dependecy Injection:
+	1. Constructor based DI:
+	2. Setter based DI:
+	3. Autowired DI:
+
++ Stereo-Type annotations:
+	- To automatically detect java classes as spring beans.
+	1. @Component
+		- other classes / pojo classes --> spring beans
+	2. @Controller
+		- bean classes that contains navigation logic.
+		- for mvc applications
+		- usually they use service classes for B.L.
+	3. @Service
+		- bean classes that contains business logic.
+		- usually they take data from repo classes.
+	4. @Repository
+		- bean classes that deal with data in application --> database, network, collection or files.
+	- These annotations works only if XML file contains <context:component-scan .../>
+
+	+ <context:component-scan base-package="pkgName"/>
+		- Search stereo-type annotations into given package and its sub packages.
+	+ <context:component-scan base-package="pkg1Name, pkg2Name, pkg3Name"/>
+		- Search stereo-type annotations into given packages and its sub packages.
+	+ Can also specify "exclude-filter", so that certain pakages will be skipped.
+
+	+ If <context:component-scan .../> is given in XML file, no need to explicitly speficy <context:annotation-config/>. 
+
++ Bean scope:
+	- Can also be given using @Scope annotation.
+	e.g. @Scope("singleton"), @Scope("prototype"), @Scope("request"), @Scope("session")
+
+	- XML file should contain: <context:component-scan .../>
+
++ Spring Web MVC:
+	- Develop Java web applications using well known MVC pattern.
+	- V - View:
+		- Implemented as JSP pages or any other UI.
+		- JSP page can contain tags: Custom tags, JSTL tags, Third Party tags, Spring tags.
+	- M - Model:
+		- Simple POJO objects used to transfer data between view and controller.
+		- The names of request paramters (form data) should match with model class field names.
+	- C - Controller:		
+		- Controller accept model/data from view, process it using BL classes (service) and then navigate to another view.
+		- This controller class is defined by the programmer with desired request processing and navigation logic.
+
+		- Spring framework provides main controller called as "Front Controller" named as "DispatcherServlet". Each request in web app is processed by front controller.
+		- It should be configured in web.xml file.
+
+
+
+
+
+
+
+
+
+
+
+
+
+

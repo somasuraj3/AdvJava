@@ -1,0 +1,224 @@
++ ORM : Object Relational Mapping:
+	- Java Objects(Classes) are mapped to the RDBMS tables and Fields are mapped to the Table columns.
+	- Hibernate, iBatis, Torque, Toplink, etc.
+	- JPA - Java Persistence API is a specification for ORM tools.
+
++ Hibernate:
+	- Hibernate is an ORM tool.
+	- Simplified CRUD operations without dealing with SQL.
+	- Flexible transaction management.
+	- Better entity relationship management.
+	- Better performance with caching mechanism.
+
++ Architecture:
+	1. Configuration:
+		- [driver, url, user, password] or [data source].
+		- These settings are stored in XML file i.e. hibernate.cfg.xml file.
+		- This file must be in classpath [src directory].
+		- This file also contains:
+			- dialect: The dialect class is part of org.hibernate.dialect pkg.
+				- Each RDBMS is little different in SQL syntax and data types.
+				- Dialect class is corresponding to specific database and
+				perform job of query generation (as per that database).
+				- This ensures that rest of the code in hibernate framework will
+				be independent of the underlying database.
+			- transaction context setting
+			- show sql
+			- connection pool size
+		- "Configuration" object is responsible for reading XML config and creating session factory object.
+	
+	2. SessionFactory:
+		- This object is responsible for creating database connection and then hibernate session.
+		- It takes database settings from the Configuration object.
+		- Since it is heavy-weight object, only one session factory object (per database) should be created in whole application.
+		- It is also thread-safe object.
+
+	3. Session:
+		- This is light-weight and most important object that perform almost all operations on database.
+		- This is not thread-safe object. Hence should not be used across threads.
+		- This object encapsulate JDBC connection. It is recommended to create session object when needed and should be immediately closed once task is done.
+		- Provides many methods for database operations:
+			- save(), persist(), update(), saveOrUpdate(), delete(), get(), load(), etc methods are provided for database operations.
+
+	4. Criteria:
+		- It is used to fetch records matching given conditions in given order.
+		- Mutliple conditions can be combined using "and" / "or".
+		- It is created using session.createCriteria().
+
+	5. Query:
+		- Hibernate allows HQL queries to perform database operations.
+		- HQL queries are targeted on entity classes (not on dbms tables).
+		- They will be internally converted to SQL.
+		- Different types of queries:
+			- Query, SQLQuery, NativeQuery, NamedQuery, ...
+
+	6. Transaction:
+		- To execute multiple DML queries as a single unit, transaction is used.
+		- If any query fails, previous queries from the transaction are rollbacked.
+		- When all queries in transaction are successful, then only they are reflected in database.
+
+		try {
+			con.setAutoCommit(false);
+			// exec multiple DML queries
+			con.commit();
+		} catch(Exception e) {
+			con.rollback();
+		}
+
++ Session Cache:
+	- Collection of entity objects managed by the hibernate layer.
+	- Internally changes to these objects are tracked by the hibernate and they are updated in the database when transaction is commited. Internally dirty flag is associated with each entity object in cache. During transaction commit, all dirty objects (whose dirty flag is set) are updated in the database.
+	- When any object searched, first it is checked in this cache and if not found, then only fetched from database.
+
++ CRUD operation using Hibernate:
+	1. MySQL database:
+		table BOOKS: ID (PK), NAME, AUTHOR, SUBJECT, PRICE.
+	
+	2. Hibernate ORM:
+		java class: class Book
+
+		@Entity
+		@Table(name="BOOKS")
+		public class Book implements Serializable {
+			@Id
+			@Column(name="ID")
+			private int bookid;
+			@Column
+			private String name;
+			@Column
+			private String author;
+			@Column
+			private String subject;
+			@Column
+			private double price;
+		
+			// constructor
+			// getter/setter
+			// toString()
+		}
+
+	3. CRUD operation:
+		A. SELECT operation: find by PK.
+			try {
+				session = factoy.openSession();
+				Book b1 = (Book) session.get(Book.class, 11);
+				if(b1==null)
+					sysout("Book not found");
+				else
+					sysout("Found : " + b1);
+			} catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				session.close();
+			}
+		OR
+			try {
+				session = factoy.openSession();
+				Book b1 = (Book) session.load(Book.class, 11);
+				sysout("Found : " + b1);
+			} catch(Exception e) {
+				sysout("Not found");
+				e.printStackTrace();
+			} finally {
+				session.close();
+			}
+		B. INSERT operation:
+			try {
+				session = factory.openSession();
+				tx = session.beginTransaction();
+				Book b1 = new Book(....);
+				//Serializable id = session.save(b1);
+				session.persist(b1);
+				tx.commit();
+			} catch(Exception e) {
+				tx.rollback();
+				e.printStackTrace();
+			} finally {
+				session.close();
+			}
+		C. DELETE operation:
+			try {
+				session = factoy.openSession();
+				tx = session.beginTransaction();
+				Book b1 = (Book) session.load(Book.class, 11);
+				sysout("Found : " + b1);
+				session.delete(b1);
+				tx.commit();
+			} catch(Exception e) {
+				tx.rollback();
+				e.printStackTrace();
+			} finally {
+				session.close();
+			}
+		D. UPDATE operation:
+			try {
+				session = factoy.openSession();
+				tx = session.beginTransaction();
+				Book b1 = (Book) session.load(Book.class, 11);
+				sysout("Found : " + b1);
+				b1.setPrice(800); // obj state is modified - dirty
+				tx.commit();
+			} catch(Exception e) {
+				tx.rollback();
+				e.printStackTrace();
+			} finally {
+				session.close();
+			}
+		OR
+			try {
+				Book b1 = new Book(11, ....., 800);
+				session = factoy.openSession();
+				tx = session.beginTransaction();
+				session.update(b1); //update non-persistent objects.
+				tx.commit();
+			} catch(Exception e) {
+				tx.rollback();
+				e.printStackTrace();
+			} finally {
+				session.close();
+			}
+
+	4. Configuration:
+		- hibernate.cfg.xml ---> Classpath i.e. "src" directory.
+		- This config is used to create SessionFactory object.
+		- In J2SE/Web applications these settings are read & factory is created in a dedicated class -- HbUtil class.
+		- Hibernate3 HbUtil -->
+			public class HbUtil {
+				private static final SessionFactory factory = buildFactory();
+				public static SessionFactory buildFactory() {
+					Configuration cfg = new Configuration();
+					cfg.configure(); //load hibernate.cfg.xml file.
+					return cfg.buildSessionFactory();
+				}
+				public static SessionFactory getFactory() {
+					return factory;
+				}
+			}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

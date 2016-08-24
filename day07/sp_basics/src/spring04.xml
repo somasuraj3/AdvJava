@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+	<bean id="b5" class="com.sh.spring04.Box">
+		<property name="length" value="5"/>
+		<property name="breadth" value="5"/>
+		<property name="height" value="5"/>
+	</bean>
+	
+	<bean id="bd" class="com.sh.spring04.BoxDaoImpl">
+		<property name="boxList">
+			<list>
+				<bean class="com.sh.spring04.Box">
+					<property name="length" value="1"/>
+					<property name="breadth" value="1"/>
+					<property name="height" value="1"/>
+				</bean>
+				<bean class="com.sh.spring04.Box">
+					<property name="length" value="2"/>
+					<property name="breadth" value="2"/>
+					<property name="height" value="2"/>
+				</bean>
+				<bean class="com.sh.spring04.Box">
+					<property name="length" value="3"/>
+					<property name="breadth" value="3"/>
+					<property name="height" value="3"/>
+				</bean>
+				<bean class="com.sh.spring04.Box">
+					<property name="length" value="4"/>
+					<property name="breadth" value="4"/>
+					<property name="height" value="4"/>
+				</bean>
+				<ref bean="b5"/>
+			</list>
+		</property>
+	</bean>
+</beans>

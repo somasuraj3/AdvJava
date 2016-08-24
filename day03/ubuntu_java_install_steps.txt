@@ -1,0 +1,32 @@
+1. Ubuntu 16.04 64-bit installation.
+2. Install JDK:
+	-- Refresh software repositories.
+		sudo apt-get update
+	-- Install open-JDK8.
+		sudo apt-get default-jdk
+3. Download JavaEE eclipse - eclise mars 64 bit.
+	-- Unzip eclipse and put it in "/opt".
+	-- In eclipse.ini change GTK version to GTK2
+		--launcher.GTK_version
+		2
+	-- Start "eclipse".
+	-- For Spring development:
+		- Eclipse -> Help -> Marketplace 
+			- Find STS plugin & install it.
+			- Restart eclipse.
+4. Download apache tomcat 8.0 64-bit for Linux from apache.org.
+	-- Unzip and put it in "/opt".
+	-- Test tomcat installation:
+		- cd /opt/tomcat/bin
+		- ./startup.sh
+		* Open browser and visit: http://localhost:8080/
+		- Back to terminal & ./shutdown.sh
+5. Install mysql:
+	-- sudo apt-get install mysql-server mysql-client
+
+
+
+
+
+
+

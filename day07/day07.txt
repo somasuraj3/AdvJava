@@ -1,0 +1,93 @@
++ Spring is lightweight comprehensive framework for simlifying JavaSE & JavaEE development.
+	- Lightweight: 
+		- Works with minimal overheads.
+		- Needs to less resources.
+		- Most of classes are simple POJOs.
+	- Comprehensive:
+		- Enough capabilities to deal with many topics.
+		- Works at fundamentals of Java i.e. class & objects.
+	- Framework:
+		- Built-in components (Partial implementations) -- Spring Container.
+		- Developer should follow some rules.
+	- Simplify Development:
+		- Dependency Injection --> Initializing objects.
+	- JavaSE & also JavaEE.
+
++ Spring Framework:
+	- 2003: Rod Johnson --> Apache License. --> Spring 1.0
+	- 1.0 --> 2.0 --> 2.5    ====> Java SE 1.4
+	- 2012 --> Spring 3.0 ==> Java SE 5.0 --> Annotations
+	- Spring 4.x ==> Java 8
+
++ Features:
+	1. Modular:
+		- Even though spring framework has many jars, only required jars can be added into the project.
+	2. Flexible:
+		- Most of frameworks follow "all or nothing" approach.
+		- Spring supports most of existing framework and can execute alongside them smoothly.
+	3. Well Designed:
+		- Good modular design.
+		- Extendable design.
+	4. Testing:
+		- Unit testing is integrated with Spring framework.
+	5. XML/Annotation config:
+		- Simplified config is available in both forms or even combined.
+	6. Dependency Injection/IoC:
+		- Spring container creates bean objects and initialize its fields (dependencies) i.e. Dependency Injection.
+		- This is usually not regular way of manual initialization of the objects. So it is also referred as "Inversion of Control".
+	7. Declarative AOP:
+		- Simplified Aspect oriented Programming.
+	8. Simplified:
+		- Most of classes/Spring beans are simple POJO classes.
+	9. Design with Interfaces:
+		- Create interface and then create implementation bean class.
+
++ Spring Architecture:
+	
+
++ Hello Spring:
+	1. Create "Java Project".
+	2. Create "lib" directory in project and add Spring jars. Also add them into classpath.
+	3. Create "spring bean configuration file" in "src" directory --> spring01.xml
+	4. Create a "IBox" interface and specify methods.
+	5. Create "Box" class, declare fields, implement constructors and implement methods.
+	6. Declare spring beans into xml file and also provide values for dependencies.
+	7. Implement main class --> 
+		- Initialize spring application context.
+		- get the bean object
+		- call the BL method.
+
++ Bean Scopes:
+	1. Singleton (default):
+		- Objects will be created when application context is loaded.
+		- When getBean() is called, it returns reference of existing object.
+		- When context is unloaded, object are destroyed (if shutdown hook is registered).
+	2. Prototype:
+		- Objects will not be created when application context is loaded.
+		- New object is created, each time getBean() is called.
+		- Bean objects should be destroyed by the programmer.
+	3. Request: 
+		- Bean scope is in http request.
+	4. Session:
+		- Bean scope is in user session.
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+

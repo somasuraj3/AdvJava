@@ -1,0 +1,110 @@
++ Hibernate:
+	- SQL queries from Hibernate
+	- HQL queries:
+		- SELECT, DELETE, UPDATE, INSERT*
+	- Named Queries:
+	- Stored Procedured from Hibernate --> NamedNativeQuery.
+	- Relationship:
+		- @OneToMany:
+			class Dept
+			{
+				// ...
+				@OneToMany(mappedBy="deptno", fetch=FetchType.EAGER, cascade={CascadeType.ALL})
+				private List<Emp> empList;
+			}
+		- fetch type:
+			- LAZY:
+				- Only Dept obj is fetched and Emp objects will be fetched later on with seperate query on database, when empList is accessed.
+			- EAGER:
+				- Dept & Emp both objects are fetched simultaneously using join query.
+		- cascade type: When Dept is changed, What will be effect on Emp?
+			- PERSIST --> child table entities will be inserted along with parent table entity
+			- REFRESH --> child table entities will be refresh along with parent table entity
+			- DETACH --> child table entities will be removed from session along with parent table entity
+			- REMOVE --> child table entities will be deleted from database along with parent table entity
+			- MERGE --> child table entities will be added into session along with parent table entity
+			- ALL --> combination of all above.
+	
++ @ManyToOne ---
+	- 	// ...
+		class Dept {
+			// deptno, dname, loc
+		}
+		// ...
+	- 	class Emp {
+			// empno, ename, sal.
+			@ManyToOne
+			@JoinColumn(name="DEPTNO") // FK column in Emp table
+			private Dept dept;
+		}
+
++ @Transient:
+	- 	@Entity
+		class Emp {
+			@Id
+			@Column(name="empno")
+			private int id;
+			@Column(name="ename")
+			private String name;
+			//@Column(name="sal")
+			private double sal;
+			@Transient
+			private double grossSalary; // salary + 30% salary
+			// ...
+		} 
+	- @Transient fields are not mapped to database columns.
+
++ Hb ORM annotations:
+	- put it on fields -- as above.
+	OR
+	- put it on getter methods.
+
+*** Hibernate Caching:
+A. Hibernate First Level Cache/Session Cache:
+    - Hibernate First Level cache is enabled by default, there are no configurations needed for this.
+    - Hibernate first level cache is session specific, that’s why when we are getting the same data in same session there is no query fired whereas in other session query is fired to load the data.
+    - Hibernate first level cache can have old values (if data is concurrently modified in another session). It is possible to get updated data using refresh().
+    - Since hibernate cache all the objects into session first level cache, while running bulk queries or batch updates it’s necessary to clear the cache at certain intervals to avoid memory issues.
+
+B. 	Hibernate Second Level Cache/SessionFactory Cache:
+	- SessionFactory object holds the second level cache data. The data stored in the second level cache will be available to entire application. But we need to enable it explicitely.
+	+ Second Level Cache implementations are provided by different vendors such as:
+		- EH (Easy Hibernate) Cache:
+			- It can cache in memory or on disk and clustered caching and it supports the optional Hibernate query result cache.
+    	- Swarm Cache:
+			- Supports caching to memory and disk in a single JVM, with a rich set of expiration policies and query cache support.
+    	- OS Cache:
+			- A cluster cache based on JGroups. It uses clustered invalidation but doesn't support the Hibernate query cache.
+    	- JBoss Cache:
+			- A fully transactional replicated clustered cache also based on the JGroups multicast library. It supports replication or invalidation, synchronous or asynchronous communication, and optimistic and pessimistic locking. The Hibernate query cache is supported.
+
+	+ Different strategies for caching an object.
+	    - Read Only: This caching strategy should be used for persistent objects that will always read but never updated. It’s good for reading and caching application configuration and other static data that are never updated. This is the simplest strategy with best performance because there is no overload to check if the object is updated in database or not.
+    	- Read Write: It’s good for persistent objects that can be updated by the hibernate application. However if the data is updated either through backend or other applications, then there is no way hibernate will know about it and data might be stale. So while using this strategy, make sure you are using Hibernate API for updating the data.
+    	- Nonrestricted Read Write: If the application only occasionally needs to update data and strict transaction isolation is not required, a nonstrict-read-write cache might be appropriate.
+    	- Transactional: The transactional cache strategy provides support for fully transactional cache providers such as JBoss TreeCache. Such a cache can only be used in a JTA environment and you must specify hibernate.transaction.manager_lookup_class.
+
+	+ Provider & Strategies:
+		Strategy/Provider 	Read-only	Nonstrictread-write 	Read-write	Transactional
+			EHCache 			X 				X 					X			NO	 	 
+			OSCache 			X 				X 					X			NO 	 
+			SwarmCache 			X				X					NO			NO 	  	 
+			JBoss Cache 		X 	  	  		NO					NO			X
+
+C. Query Cache: 
+	- Hibernate can also cache result set of a query.
+	- Hibernate Query Cache doesn’t cache the state of the actual entities in the cache; it caches only identifier values and results of value type. 
+	- So it should always be used in conjunction with the second-level cache.
+	- To use the query cache, you must first activate it using the hibernate.cache.use_query_cache="true" property in the configuration file. 
+	- Example:
+		Session session = SessionFactory.openSession();
+		Query query = session.createQuery("FROM EMPLOYEE");
+		query.setCacheable(true); //***
+		List users = query.list();
+		session.close();
+
+
+
+
+
+

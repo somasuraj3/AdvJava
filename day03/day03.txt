@@ -1,0 +1,67 @@
++ Nilesh Ghule. <nilesh@sunbeaminfo.com> 9527331338.
+
++ JSP pages:
+	- Java beans
+	- JSP EL
+	- Third party tags e.g. JSTL, ...
+
++ JSTL tags:
+	- To use in project:
+		- Add jstl.jar and standard.jar into project/WEB-INF/lib directory.
+	- In JSP page:
+		- <%@taglib prefix="c" uri="..../jstl/core"%>
+		-
+			<c:choose>, <c:forEach>, etc.
+
++ JSTL:
+	- JSP Standard Tag Library
+	- Not part of JSP specification. Seperate jars given by Sun Microsystem (Oracle)
+	- Mainly used to reduce scriptlets from JSP pages.
+	- JSTL tags categories:
+		- Core tags:
+			- To deal with business logic & programming constructs e.g. if-else, switch-case, loops, etc.
+			-	<c:choose> [like switch case]
+					<c:when test="${condition1}">
+						// ...
+					</c:when>
+					<c:when test="${condition12}">
+						// ...
+					</c:when>
+					<c:otherwise>
+						// ...
+					</c:otherwise>
+				</c:choose>
+			- 	<c:forEach var="varName" items="${collection}">
+					// ...
+				</c:forEach>
+			- 	<a href="<c:url value="link"/>"> Click Me </a>
+			-	<c:redirect url="link"/>
+		- JDBC tags:
+			- Create connection, fire query on database.
+			- These tags are not recommended.
+		- XML tags:
+			- XML processing.
+		- Formatting tags:
+			- To format output like currency, date time, etc,
+		- Function tags:
+			- Use simple algo/functions in JSP code.
+			- e.g. convert string into upper/lower case.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

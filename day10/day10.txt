@@ -1,0 +1,102 @@
++ spmvc_pizza - dynamic web application:
+	- add jars in the classpath.
+	- front controller entry in web.xml.
+	- spring bean xml file.
+		- data source, session factory -> packagesToScan, transaction manager.
+		- component-scan, annotation-driven, viewResolver.
+	- Source code:
+		- hibernate enitity pojos.
+		- dao/repo interface & classes --> MenuDao, OrderDao, CustomerDao.
+		- service interfaces & classes --> CustomerService, MenuService, OrderService.
+			@Transactional.
+		- controller classes -->
+			- MenuController
+				- doMenu()
+					
++ Spring Localization:
+1. Create message properties files in WEB-INF directory.
+		WEB-INF/mesg_en.properties
+			app.title = Nilesh Ghule
+		WEB-INF/mesg_hi.properties
+			app.title = \u0928\u093f\u0932\u0947\u0936 \u0918\u0941\u0932\u0947
+	+ The unicode character strings should be converted into ascii format using "native2ascii" tool of JDK. Syntax: native2ascii infile outfile
+
+2. In controller class, "locale" can be accessed by req handler method argument of type java.util.Locale.
+	@RequestMapping(value = "/abc", method = RequestMethod.GET)
+	public String method(Locale locale, Model model) {
+		System.out.println("Locale : " + locale);
+		// ...	
+	}
+		
+3. In JSP pages, use tag <spring:message code="app.title"/>
+
+4. Bean configuration file should be as follows:
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="WEB-INF/mesg" />
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+
+	<bean id="localeResolver"
+		class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+		<property name="defaultLocale" value="en" />
+		<property name="cookieName" value="myAppLocaleCookie"/>
+		<property name="cookieMaxAge" value="3600"/>
+	</bean>
+	<!-- 
+	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+		<property name="defaultLocale" value="en" />
+	</bean>
+	-->
+	 
+	<mvc:interceptors>
+		<bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+			<property name="paramName" value="locale" />
+		</bean>
+	</mvc:interceptors>
+	
+	A. messageSource bean is configured to enable i18n for our application. basename property is used to provide the location of resource bundles. classpath:messages means that resource bundles are located in the classpath and follows name pattern as messages_{locale}.properties. defaultEncoding property is used to define the encoding used for the messages.
+	
+	B. localeResolver bean of type org.springframework.web.servlet.i18n.CookieLocaleResolver is used to set a cookie in the client request so that further requests can easily recognize the user locale.
+		If your application maintains user sessions, then you can also use org.springframework.web.servlet.i18n.SessionLocaleResolver as localeResolver to use a locale attribute in the user’s session (as shown in comments).
+		If we don’t register any “localeResolver”, AcceptHeaderLocaleResolver will be used by default, which resolves user locale by checking the accept-language header in the client HTTP request.
+
+	C. org.springframework.web.servlet.i18n.LocaleChangeInterceptor interceptor is configured to intercept the user request and identify the user locale. The parameter name is configurable and we are using request parameter name for locale as “locale”. Without this interceptor, we won’t be able to change the user locale and send the response based on the new locale settings of the user. It needs to be part of mvc:interceptors element otherwise Spring won’t configure it as an interceptor.
+
++ Spring Validations:
+	1. Use various validation annotations on POJO/Model class fields. 
+		HB : @NotEmpty, @Length, @Range, @Email, @DateTimeFormat, @URL
+		JA : @NotBlank, @Size, @Min, @Max, @Pattern
+	2. In .properties file declare messages
+		ConstraintName.ModelAttrName.fieldName = validation message.
+		e.g. NotEmpty.user.username = username cannot be blank.
+	3. In spring xml file configure path of .properties file.	
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="WEB-INF/mesg" />
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+	4. In controller req handler method, use @Valid to process validation logic on model attribute. Also immediately next argument should be BindingResult to get the validation errors.
+@RequestMapping("/register")
+	public String doRegister(Model model, @Valid @ModelAttribute("user") Login login, BindingResult res) {
+		System.out.println(res.toString());
+		if(res.hasErrors()) {
+			model.addAttribute("status", "Form submission has errors.");
+			return "register";
+		}
+		model.addAttribute("status", "Form submission is successful.");
+		return "register";
+	}
+	5. In JSP pages, display field error messages using
+			<sf:errors path="username" cssClass="error"/>
+	   In JSP pages, display all error messages using
+			<sf:errors path="*" cssClass="error"/>
+
++ Spring Tiles Integration:
+
++ Spring Expression Language:
+
++ Spring Security:
+
+
+
+
+

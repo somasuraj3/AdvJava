@@ -1,0 +1,79 @@
++ Nilesh Ghule <nilesh@sunbeaminfo.com>.
++ Sat/Sun --> Servlets & JSPs.
+
++ HTTP protocol:
+  - Web server is a program that allows to execute multiple web applications in it. Example: IIS, Apache, NodeJS, Tomcat, JBoss, WebLogic, WebSphere, etc.
+  - Web applicaton is set of web pages & services.
+  - Web client is program that access web applications hosted in web servers. Example: Web browser, Mobile application, Desktop application, Embedded applications.
+
+  - HTTP protcol is connection-less.
+  - Request* Response* model.
+
+  - Web application has two types of resouces:
+     1. static --> sent to the client in response as it is.
+     2. dynamic --> sent to the client after executing/processing at server side.
+
++ Servlet
+  - Java class that execute on the server side when request is made from the client and produces response to be given to the client (html).
+  - Servlet Life Cycle: --> Servlet interface
+     - init() --> called only once when obj is created -- initialization.
+        - when first req is arrived for servlet.
+     - service() --> called for each request of the client.
+        - processing client request and generate response.
+     - destroy() --> called only once before obj is destroyed -- deinit.
+        - when web server shutdown.
+        - servlet is not used for longer duration & mem shrotage at server.
+  - class hierarchy:
+     - 
+
++ Setup ...
+  1. JDK 1.8
+  2. Tomcat 8 Web server
+  3. Eclipse Mars (Java EE) - with STS plugin
+  4. MySQL 5
+
++ Implementation:
+  class MyServlet extends HttpServlet {
+      doGet() {
+
+      }
+      doPost() {
+
+      }
+  }
+     
++ Servlet Config in web.xml:
+  <servlet>
+  	<servlet-name>MyServlet</servlet-name>
+  	<servlet-class>com.sh.servlet1.MyServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>MyServlet</servlet-name>
+  	<url-pattern>/abcd</url-pattern>
+  </servlet-mapping> 
+
+  Client --> request for /abcd --> servlet name --> servlet class --> loaded in web server --> object is created --> init() is called --> service() is called, which internally calls doGet()/doPost().
+
+  <servlet>
+  	<servlet-name>StartupServlet</servlet-name>
+  	<servlet-class>com.sh.servlet1.StartupServlet</servlet-class>
+  	<load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>StartupServlet</servlet-name>
+  	<url-pattern>/start</url-pattern>
+  </servlet-mapping>
+     * <load-on-startup> means servlet class will be loaded & instantiated as soon as application is deployed. Its init() method will be called immediately after object creation/
+     * Such servlets are used to prepare basic config of the application, before first request is arrived.
+     * Typically spring controller is a load-on-startup servlet.
+     * In case of multiple load-on-startup servlets, it signifies sequence of execution.
+
+   
+
+
+
+
+
+
+
+

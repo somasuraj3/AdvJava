@@ -1,0 +1,106 @@
++ Exam:
+	- Saturday 27th Aug - 10:00 AM.
+	- Lab Exam (50 Marks): Spring & Hibernate.
+	- Quiz (50 Marks): Objective Questions of Servlets, JSP, Spring, Hibernate.
+
++ Spring Validations:
+	+ JSR-303 validation apis.
+		- Hibernate validators
+		- Java Validations
+	1. POJO class fields -- annotations.
+	2. Put messages in resource bundle -- AnnonName.model.field
+	3. In controller use @Valid for model object.
+	4. In JSP page <sf:errors /> to display errors.
+
+	+ Custom Validations:
+		- Way1: Implement your own JSR-303 annotation & follow above steps.
+		- Way2: Spring Custom Validator.
+
+	+ Spring Custom Validator:
+	1. Implement class inherited from "org.springframework.validation.Validator".-->@Component
+		- Implement supports()
+			- Check if Model class is supported by this validator.
+		- Implement validate()
+			- Validate object and add errors into Errors object, if any.
+				- ValidationUtils.rejectIfEmpty()
+				- err.rejectValue("fieldName", "MessageBundle_KeyName", "Default Message");
+	2. Autowire validator into Controller class.
+	3. Attach validator for Controller class using @InitBinder method.
+		binder.addValidators(validator);
+	4. Use @Valid for model object.
+
++ Spring Tiles Integration:
+	- Apache Foundation given Tiles Framework for Consistent look & feel / UI in web pages.
+	- In tiles framework
+		1. Create base layout .jsp page.
+			- Use HTML table or HTML5 layout or <div> tags.
+			- Configurable parts should be given using <tiles:insert-attribute name="header"/>
+<tiles:insert-attribute name="footer"/>
+<tiles:insert-attribute name="title"/>
+<tiles:insert-attribute name="content"/> ...
+		2. Create Pages:
+			header.jsp, footer.jsp, c1.jsp, ...
+		3. Create tile defination XML file - /WEB-INF/tiles.xml
+			....
+		4. Make tiles configurer & view resolver entry into spring xml.
+	<bean id="tilesConfigurer"
+		class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+		<property name="definitions">
+			<list>
+				<value>/WEB-INF/tiles.xml</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView"/>
+	</bean>
+
++ Spring AOP:
+	+ Programming:
+		- OOP: Object Oriented Programming
+		- POP: Procedure Oriented Programming	
+		- SOP: Serivce Oriented Programming
+		- AOP: Aspect Oriented Programming
+
+	+ 
+		class Account {
+			withdraw() ...
+			deposit() ...
+		}
+
+		@Aspect
+		class AccountAspect {
+			@Before("Account.withdraw()")
+			beforeWithdraw(JoinPoint jp) {
+				acc = jp.getTarget();
+				if(acc.getBalance() == 0)
+					// ...
+				// ..
+			}
+			@After("Account.withdraw()")
+			afterDeposit() {
+				// ...
+			}	
+			@Around("Account.someMethod()")
+			doSomthing() {
+				// preprocessing
+				someMethod();
+				// postprocessing
+			}
+			@AfterThrowing("Account.abcMethod()")
+			handleError() {
+				// ...
+			}
+		}
+
++ Spring JDBC Template:
+
++ Spring Hibernate Template:
+
++ Spring Security Framework:
+
++ Spring REST Services:
+
++ 
+
+

@@ -1,0 +1,19 @@
+1. Purchase SSL certificate or for testing create one self-signed certificate using "keytool" command.
+	
+	keytool -genkey -alias tomcat -keyalg RSA
+	
+	It creates ".keystore" file in your home (/home/username) directory.
+	
+
+2. Copy .keystore file into tomcat directory with name "keystore".
+
+3. Into tomcat/conf/server.xml:
+	- Comment port 8080 settings.
+	- Uncomment port 8443 settings.
+		Also add "keystore" path and keystore password.
+
+4. Testing:
+	- Start tomcat by running bin/startup.sh file.
+	- Open browser and visit url: https://localhost:8443/
+
+

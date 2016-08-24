@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+	<!-- dependency beans -->
+	<bean id="clog" class="com.sh.spring02.ConsoleLog">
+	</bean>
+	<bean id="flog" class="com.sh.spring02.FileLog">
+	</bean>
+	
+	<!-- dependent bean -->
+	<bean id="b1" class="com.sh.spring02.Box">
+		<property name="logger" ref="flog"/>
+		<property name="length" value="5"/>
+		<property name="breadth" value="4"/>
+		<property name="height" value="3"/>
+	</bean>
+</beans>

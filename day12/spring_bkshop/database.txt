@@ -1,0 +1,27 @@
+MySQL Queries for Creating Schema:
+
+CREATE TABLE `users` (
+  `username` varchar(45) NOT NULL,
+  `password` varchar(45) NOT NULL,
+  `enabled` tinyint(4) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`username`)
+);
+
+CREATE TABLE `user_roles` (
+  `user_role_id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(45) NOT NULL,
+  `ROLE` varchar(45) NOT NULL,
+  PRIMARY KEY (`user_role_id`),
+  UNIQUE KEY `uni_username_role` (`ROLE`,`username`),
+  KEY `fk_username_idx` (`username`),
+  CONSTRAINT `fk_username` FOREIGN KEY (`username`) REFERENCES `users` (`username`)
+);
+
+CREATE TABLE `books` (
+  `bookid` int(11) NOT NULL,
+  `name` varchar(30) DEFAULT NULL,
+  `author` varchar(30) DEFAULT NULL,
+  `subject` varchar(20) DEFAULT NULL,
+  `price` double DEFAULT NULL,
+  PRIMARY KEY (`bookid`)
+);

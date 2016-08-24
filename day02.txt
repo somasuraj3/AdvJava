@@ -1,0 +1,105 @@
++ HTTP is connection-less protocol. Each new request, a new connection is established. So HTTP is stateless protocol i.e. server is not able to keep track of individual clients and will treat each request as fresh request.
+
++ State Management:
+  - Keeping info/data of the client, so that client get a feel of continous interaction with server.
+  - Client Side State Management: (maintain info at client end).
+     * Cookies:
+        - Keep only text data upto 4 KB on client side.
+        - Can be temporary or persistent.
+        - To send cookie to client:
+            Cookie c = new Cookie("key", "value");
+            resp.addCookie(c);
+        - To receive cookie from client:
+            Cookie[] arr = req.getCookies();
+            for(Cookie c : arr) {
+                if(c.getName().equals("key")) {
+                    uname = c.getValue();
+                }
+            }
+     * Query String
+     - Hidden Form Fields
+     - HTML5 storage
+  - Server Side State Management: (maintain info at server end).
+     * Session
+         - session = req.getSession();
+            1. Check if cookie is present for session id. If present return corresponding session object.
+            2. Create new session object (map), new session id. Map session id to the session object. Create cookie of session id and add into response.
+            3. Return created session object.
+        - 
+     - Application (ServletContext)
+
+         ctx = req.getServletContext();
+         ctx.setAttribute("key", value);
+         value = ctx.getAttribute("key");
+
+
++ JSP Implicit objects --> local variables of jspService() method.
+  - request, resonse
+  - session, application
+  - config
+  - out
+  - page, pageContext
+  - exception
+
++ JSP (PL) + Java Beans (BL).
+  + Java bean --> POJO (fields, ctor, getter/setter) + bus logic method(s)
+
+
++ <jsp:useBean id="objName" class="pkg.ClassName" scope="scopeName"/>
+  1. Check if bean of given name is present in given scope. If present, access it (using getAttribute() method of the scope).
+  2. If not present, then create new object of given class. Add into the given scope with given name (using setAttribute() method of the scope). 
+
++ Bean Scopes:
+  1. page (default) --> pageContext attributes
+  2. request --> request attribute
+  3. session --> session attribute
+  4. application --> servletContext attributes
+
++ PageContext object contains all components and attributes required for execution of current request of the JSP page.
+
++ JSP EL:
+  - To access objects from diffrent scopes.
+     - pageScope, requestScope, sessionScope, applicationScope.
+
+  - Syntax:
+     ${scopeName.objName} --> getAttribute() from given scope.
+     ${scopeName.objName.fieldName} --> getAttribute() from given scope & then getter metod of the field.
+     ${scopeName.objName.methodName()} --> getAttribute() from given scope & then invoke given metod of the field.
+
+     ${objName} --> object will be searched in all scopes starting from page to application.
+
+  - EL implicit objects:
+    - cookie    -->    ${cookie.uname}   ---> returns value of uname cookie.
+    - param   --> ${param.uname} --> requets parameter
+    - paramValues --> ${paramValues.ctlName} --> requets parameters
+    - initParam
+    - ...
+
++ Web Server = Web Container (Servlet & JSP) + Extra services.
+   Example: Tomcat, Enhydra, Lotus, ...
+
++ Application Server = EJB Container (EJB) + Web Container (Servlet & JSP) + Extra services
+   Example: Glassfish, JBoss, WebSphere, WebLogic, ...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

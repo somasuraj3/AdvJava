@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">        
+
+<tiles-definitions>
+	<!-- defining general master -->
+	<definition name="headerfooter.definition" template="/WEB-INF/jsp/headerfooter_master.jsp">
+		<put-attribute name="title" value="" />
+		<put-attribute name="header" value="/WEB-INF/jsp/header.jsp" />
+		<put-attribute name="body" value="" />
+		<put-attribute name="footer" value="/WEB-INF/jsp/footer.jsp" />
+	</definition>
+	
+	<!-- login page in tiles  -->
+	<definition name="login" extends="headerfooter.definition">
+		<put-attribute name="title" value="Login" />
+		<put-attribute name="body" value="/WEB-INF/pages/login.jsp" />
+	</definition> 
+	<!-- logout page in tiles  -->
+	<definition name="logout" extends="headerfooter.definition">
+		<put-attribute name="title" value="Logout" />
+		<put-attribute name="body" value="/WEB-INF/pages/logout.jsp" />
+	</definition> 
+		
+	<!-- defining user master -->
+	<definition name="user.definition" template="/WEB-INF/jsp/user_master.jsp">
+		<put-attribute name="title" value="" />
+		<put-attribute name="header" value="/WEB-INF/jsp/header.jsp" />
+		<put-attribute name="menu" value="/WEB-INF/jsp/menu.jsp" />
+		<put-attribute name="body" value="" />
+		<put-attribute name="footer" value="/WEB-INF/jsp/footer.jsp" />
+	</definition>
+	
+	<!-- subjects page in tiles -->
+	<definition name="subjects" extends="user.definition">
+		<put-attribute name="title" value="Subjects" />
+		<put-attribute name="body" value="/WEB-INF/pages/subjects.jsp" />
+	</definition> 
+
+	<!-- books page in tiles -->
+	<definition name="books" extends="user.definition">
+		<put-attribute name="title" value="Subject Books" />
+		<put-attribute name="body" value="/WEB-INF/pages/books.jsp" />
+	</definition> 
+	
+	<!-- cart page in tiles -->
+	<definition name="cart" extends="user.definition">
+		<put-attribute name="title" value="User Cart" />
+		<put-attribute name="body" value="/WEB-INF/pages/cart.jsp" />
+	</definition> 
+
+	<!-- newbook page in tiles -->
+	<definition name="newbook" extends="user.definition">
+		<put-attribute name="title" value="New Book" />
+		<put-attribute name="body" value="/WEB-INF/pages/newbook.jsp" />
+	</definition> 
+	<definition name="modbook" extends="user.definition">
+		<put-attribute name="title" value="Change Book" />
+		<put-attribute name="body" value="/WEB-INF/pages/modbook.jsp" />
+	</definition> 
+</tiles-definitions>

@@ -1,0 +1,10 @@
+@CHARSET "UTF-8";
+
+.div2 {
+	border: 2px solid #ff0000;
+}
+
+.span2 {
+	display: block;
+}
+
